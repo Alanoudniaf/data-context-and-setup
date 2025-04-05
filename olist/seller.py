@@ -141,8 +141,16 @@ class Seller:
         Returns a DataFrame with:
         'seller_id', 'share_of_five_stars', 'share_of_one_stars', 'review_score'
         """
+        reviews = self.data['order_reviews'].merge(self.data['order_items'], on='order_id')
+        review_data = reviews.groupby('seller_id')['review_score'].agg(
+        review_score='mean',
+        share_of_five_stars=lambda x: (x == 5).mean(),
+        share_of_one_stars=lambda x: (x == 1).mean()
+        ).reset_index()
+        return review_data.fillna(0)
 
-        pass  # YOUR CODE HERE
+
+
 
     def get_training_data(self):
         """
